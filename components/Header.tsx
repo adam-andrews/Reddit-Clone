@@ -15,6 +15,7 @@ import {
 	SpeakerphoneIcon,
 	VideoCameraIcon,
 } from '@heroicons/react/outline';
+import { signIn } from 'next-auth/react';
 
 function Header() {
 	return (
@@ -57,10 +58,13 @@ function Header() {
 			</div>
 
 			{/* {Sign in Sign Out} */}
-			<div className="hidden items-center lg:flex space-x-2 border border-gray-100 p-2 cursor-pointer">
+			<div
+				onClick={() => signIn()}
+				className="hidden items-center lg:flex space-x-2 border border-gray-100 p-2 cursor-pointer"
+			>
 				<div className="relative h-5 w-5 flex-shrink-0 cursor-pointer">
 					<Image
-						objectFit='contain'
+						objectFit="contain"
 						src="https://links.papareact.com/23l"
 						layout="fill"
 						alt=""
