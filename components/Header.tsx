@@ -15,9 +15,10 @@ import {
 	SpeakerphoneIcon,
 	VideoCameraIcon,
 } from '@heroicons/react/outline';
-import { signIn } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 
 function Header() {
+	const { data: session } = useSession();
 	return (
 		<div className="flex sticky top-0 z-50 bg-white px-4 py-2 shadow-sm">
 			<div className="relative h-10 w-20 flex-shrink-0 cursor-pointer">
@@ -58,20 +59,41 @@ function Header() {
 			</div>
 
 			{/* {Sign in Sign Out} */}
-			<div
-				onClick={() => signIn()}
-				className="hidden items-center lg:flex space-x-2 border border-gray-100 p-2 cursor-pointer"
-			>
-				<div className="relative h-5 w-5 flex-shrink-0 cursor-pointer">
-					<Image
-						objectFit="contain"
-						src="https://links.papareact.com/23l"
-						layout="fill"
-						alt=""
-					/>
+			{session ? (
+				<div
+					onClick={() => signOut()}
+					className="hidden items-center lg:flex space-x-2 border border-gray-100 p-2 cursor-pointer"
+				>
+					<div className="relative h-5 w-5 flex-shrink-0 cursor-pointer">
+						<Image
+							objectFit="contain"
+							src="https://links.papareact.com/23l"
+							layout="fill"
+							alt=""
+						/>
+					</div>
+					<div className='flex text-xs'>
+                        <p className="truncate">{session?.user?.name}</p>
+                        <p className="text-gray-400">1 karma</p>
+                    </div>
+                    <ChevronDownIcon className="h-5 flex-shrink-0 text-gray-400" />
 				</div>
-				<p className="text-gray-400"> Sign In</p>
-			</div>
+			) : (
+				<div
+					onClick={() => signIn()}
+					className="hidden items-center lg:flex space-x-2 border border-gray-100 p-2 cursor-pointer"
+				>
+					<div className="relative h-5 w-5 flex-shrink-0 cursor-pointer">
+						<Image
+							objectFit="contain"
+							src="https://links.papareact.com/23l"
+							layout="fill"
+							alt=""
+						/>
+					</div>
+					<p className="text-gray-400"> Sign In</p>
+				</div>
+			)}
 		</div>
 	);
 }
