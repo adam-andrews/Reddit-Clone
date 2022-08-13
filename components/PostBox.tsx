@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { cloneElement } from 'react';
 import { useSession } from 'next-auth/react';
 import Avatar from './Avatar';
 import { PhotographIcon, LinkIcon } from '@heroicons/react/solid';
 import { useForm } from 'react-hook-form';
+import { useMutation } from '@apollo/client';
+import { ADD_POST } from '../graphql/mutations';
+import client from '../apollo-client';
+import { GET_SUBREDDIT_BY_TOPIC } from '../graphql/queries';
 
 type FormData = {
 	postTitle: string;
@@ -13,6 +17,7 @@ type FormData = {
 function PostBox() {
 	const { data: session } = useSession();
 	const [imageBoxOpen, setImageBoxOpen] = React.useState<boolean>(false);
+	const [addPost] = useMutation(ADD_POST);
 
 	const {
 		register,
@@ -23,8 +28,38 @@ function PostBox() {
 	} = useForm<FormData>();
 
 	const onSubmit = handleSubmit(async (formData) => {
-		console.log(formData);
+		try {
+            //Query for subreddit topic
+            const {data:{getSubredditListByTopic}} = await client.query({
+                query: GET_SUBREDDIT_BY_TOPIC,
+                variables: {
+                    topic: formData.subreddit
+                }
+            })
+
+            const subredditExists = getSubredditListByTopic.length > 0
+            if(!subredditExists){
+                alert("Subreddit does not exist")
+                return
+            }
+
+            else{
+                await addPost({
+                    variables: {
+                        title: formData.postTitle,
+                        body: formData.postBody,
+                        image: formData.postImage,
+                        subreddit: formData.subreddit,
+                        user: session?.user?.name
+                    }
+                });
+            }
+			console.log(formData);
+		} catch (err) {
+			console.log(err);
+		}
 	});
+
 	return (
 		<form
 			onSubmit={onSubmit}
