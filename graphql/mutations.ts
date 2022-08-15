@@ -14,14 +14,22 @@ export const ADD_POST = gql`
 			subreddit_id: $subreddit_id
 			title: $title
 			username: $username
-		)
-        {
-            body,
-            created_at,
-            image,
-            subreddit_id,
-            title,
-            username
+		) {
+			body
+			created_at
+			image
+			subreddit_id
+			title
+			username
+		}
+	}
+`;
+
+export const ADD_SUBREDDIT = gql`
+	mutation AddSubreddit($topic:String!) {
+        insertSubreddit(topic:$topic){
+			id: $id
+            topic: $topic
         }
 	}
 `;
